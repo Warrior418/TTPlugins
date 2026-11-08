@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>IndicatorsPlusPlus.Delta.Tests</RootNamespace>
+    <TigerTradeLib Condition="'$(TigerTradeLib)' == ''">C:\Program Files (x86)\TigerTrade</TigerTradeLib>
+    <UseWPF Condition="'$(WpfRef)' == ''">true</UseWPF>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\src\Delta++\Palette.cs" Link="Palette.cs" />
+    <Compile Include="..\..\src\Delta++\Tiers\DeltaTier.cs" Link="DeltaTier.cs" />
+    <Compile Include="..\..\src\Delta++\Tiers\TierZoomOptions.cs" Link="TierZoomOptions.cs" />
+    <Compile Include="..\..\..\Common\src\Helpers\Memory.cs" Link="Memory.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="TigerTrade.Core">
+      <HintPath>$(TigerTradeLib)/TigerTrade.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="TigerTrade.Dx">
+      <HintPath>$(TigerTradeLib)/TigerTrade.Dx.dll</HintPath>
+    </Reference>
+    <Reference Include="TigerTrade.Chart">
+      <HintPath>$(TigerTradeLib)/TigerTrade.Chart.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(WpfRef)' != ''">
+    <Reference Include="PresentationCore">
+      <HintPath>$(WpfRef)/PresentationCore.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <HintPath>$(WpfRef)/PresentationFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase">
+      <HintPath>$(WpfRef)/WindowsBase.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xaml">
+      <HintPath>$(WpfRef)/System.Xaml.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
