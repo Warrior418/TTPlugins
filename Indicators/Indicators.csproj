@@ -1,68 +1,71 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{45E097FC-297F-40FA-93BF-84B36D95269A}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IndicatorsPlusPlus</RootNamespace>
     <AssemblyName>Indicators++</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <OutputType>Library</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>12.0</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Deterministic>true</Deterministic>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <UseWPF>true</UseWPF>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <PlatformTarget>x64</PlatformTarget>
+    <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
+    <!-- Vendor DLLs. Defaults to the Tiger.com Windows install used by 7.4. -->
+    <TigerTradeLib Condition="'$(TigerTradeLib)' == ''">C:\Program Files (x86)\TigerTrade</TigerTradeLib>
+    <!--
+      Tiger.com 7.4.9805 hosts net10.0 plus Microsoft.WindowsDesktop.App.
+      That is the default. IncludeNet472=true also builds the previous
+      net472 output, which only compiles against .NET Framework vendor DLLs.
+      The 7.4 net10 vendor assemblies fail that target with CS1705.
+    -->
+    <TargetFramework Condition="'$(IncludeNet472)' != 'true'">net10.0-windows</TargetFramework>
+    <TargetFrameworks Condition="'$(IncludeNet472)' == 'true'">net10.0-windows;net472</TargetFrameworks>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
     <Reference Include="TigerTrade.Chart">
-      <HintPath>C:\Program Files (x86)\TigerTrade\TigerTrade.Chart.dll</HintPath>
+      <HintPath>$(TigerTradeLib)/TigerTrade.Chart.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="TigerTrade.Core">
-      <HintPath>C:\Program Files (x86)\TigerTrade\TigerTrade.Core.dll</HintPath>
+      <HintPath>$(TigerTradeLib)/TigerTrade.Core.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="TigerTrade.Dx">
-      <HintPath>C:\Program Files (x86)\TigerTrade\TigerTrade.Dx.dll</HintPath>
+      <HintPath>$(TigerTradeLib)/TigerTrade.Dx.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="TigerTrade.Tc">
-      <HintPath>C:\Program Files (x86)\TigerTrade\TigerTrade.Tc.dll</HintPath>
+      <HintPath>$(TigerTradeLib)/TigerTrade.Tc.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="WindowsBase" />
   </ItemGroup>
+
   <ItemGroup>
     <Compile Include="src\**\*.cs" />
   </ItemGroup>
+
   <Import Project="..\Common\Common.projitems" Label="Shared" />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>powershell -ExecutionPolicy Unrestricted -File $(SolutionDir)Scripts\post_build.ps1 -BasePath $(SolutionDir) -SourcePath $(TargetPath) -TargetPathName INDICATORS_TARGET_PATH"</PostBuildEvent>
-  </PropertyGroup>
+
+  <!-- Copies the plugin on Windows. Remote and artifact builds set SkipPluginInstall=true. -->
+  <Target Name="InstallPlugin" AfterTargets="Build" Condition="'$(SkipPluginInstall)' != 'true' AND '$(OS)' == 'Windows_NT'">
+    <Exec Command="powershell -ExecutionPolicy Unrestricted -File &quot;$(SolutionDir)Scripts\post_build.ps1&quot; -BasePath &quot;$(SolutionDir)&quot; -SourcePath &quot;$(TargetPath)&quot; -TargetPathName INDICATORS_TARGET_PATH" />
+  </Target>
 </Project>
