@@ -15,16 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using CustomCommon.Helpers;
+using TigerTrade.Core.UI.Common;
 
 namespace IndicatorsPlusPlus.Delta
 {
     [ReadOnly(true)]
     [DataContract(Name = "DeltaTier")]
     [TypeConverter(typeof(ExpandableObjectConverter))]
-    internal sealed class DeltaTier : INotifyPropertyChanged, DeepCopy<DeltaTier>
+    internal sealed class DeltaTier : INotifyPropertyChanged, IDynamicProperty, DeepCopy<DeltaTier>
     {
         private bool _show;
 
@@ -137,6 +139,7 @@ namespace IndicatorsPlusPlus.Delta
 
         private TierZoomOptions _zoom;
 
+        [Browsable(false)]
         [DataMember(Name = "Zoom")]
         [DisplayName("Tier Zoom Options")]
         public TierZoomOptions Zoom
@@ -153,6 +156,38 @@ namespace IndicatorsPlusPlus.Delta
 
                 RecalculateTiers();
                 OnPropertyChanged(nameof(Zoom));
+            }
+        }
+
+        // The 7.4 indicator manager edits scalars on a collection item. It does not
+        // expand nested objects, so these forward to the serialized Zoom value.
+        [DisplayName("Reduce Ratio (Higher for Big Tiers)")]
+        public double ReduceRatio
+        {
+            get => Zoom == null ? 0 : Zoom.ReduceRatio;
+            set
+            {
+                if (Zoom == null)
+                {
+                    Zoom = new TierZoomOptions();
+                }
+
+                Zoom.ReduceRatio = value;
+            }
+        }
+
+        [DisplayName("Min Ratio (Higher for Big Tiers)")]
+        public double MinRatio
+        {
+            get => Zoom == null ? 0 : Zoom.MinRatio;
+            set
+            {
+                if (Zoom == null)
+                {
+                    Zoom = new TierZoomOptions();
+                }
+
+                Zoom.MinRatio = value;
             }
         }
 
@@ -203,6 +238,26 @@ namespace IndicatorsPlusPlus.Delta
         public override string ToString()
         {
             return $"{Size}+";
+        }
+
+        public bool GetPropertyHasStandardValues(string propertyName)
+        {
+            return false;
+        }
+
+        public bool GetPropertyReadOnly(string propertyName)
+        {
+            return false;
+        }
+
+        public IEnumerable<object> GetPropertyStandardValues(string propertyName)
+        {
+            return Array.Empty<object>();
+        }
+
+        public bool GetPropertyVisibility(string propertyName)
+        {
+            return true;
         }
     }
 }

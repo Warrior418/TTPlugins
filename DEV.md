@@ -27,6 +27,8 @@ MSBuild
 
 ### Release
 
+Tiger.com 7.4 hosts `net10.0` and `Microsoft.WindowsDesktop.App`. `Indicators++` Release defaults to `net10.0-windows` and reads vendor DLLs from `TigerTradeLib` (default `C:\Program Files (x86)\TigerTrade`). This needs the .NET 10 SDK. .NET SDK 9 cannot target `net10.0`.
+
 ```ps1
 Scripts\build_release.ps1
 ```
@@ -34,8 +36,10 @@ Scripts\build_release.ps1
 *or*
 
 ```ps1
-MSBuild /p:Configuration=Release
+dotnet build Indicators\Indicators.csproj -c Release -p:SkipPluginInstall=true
 ```
+
+`IncludeNet472=true` also builds the old `net472` output. That target compiles only against .NET Framework vendor DLLs. The 7.4 net10 assemblies fail it with `CS1705`. `Objects++` is still the net472 project.
 
 ### Auto
 

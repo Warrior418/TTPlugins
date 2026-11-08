@@ -16,8 +16,10 @@
 
 Write-Host
 Write-Host
-Write-Host -ForegroundColor Cyan "Compiling C# Solution in Release Mode"
+Write-Host -ForegroundColor Cyan "Compiling Indicators++ Release for Tiger.com 7.4 (net10.0-windows)"
 Write-Host
 Write-Host
 
-MSBuild /p:Configuration=Release
+# Requires the .NET 10 SDK. Tiger.com 7.4 vendor DLLs are net10.0.
+# SDK 9 cannot target net10.0. SkipPluginInstall leaves copying to the Indicators folder manual.
+dotnet build "$PSScriptRoot\..\Indicators\Indicators.csproj" -c Release -p:SkipPluginInstall=true

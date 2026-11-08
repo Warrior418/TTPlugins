@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Windows.Media;
 using CustomCommon.Helpers;
+using TigerTrade.Core.UI.Common;
 using TigerTrade.Core.UI.Converters;
 using TigerTrade.Dx;
 using TigerTrade.Dx.Enums;
@@ -28,7 +30,7 @@ namespace IndicatorsPlusPlus.Delta
     [ReadOnly(true)]
     [DataContract(Name = "Palette")]
     [TypeConverter(typeof(ExpandableObjectConverter))]
-    internal sealed class Palette : INotifyPropertyChanged, DeepCopy<Palette>
+    internal sealed class Palette : INotifyPropertyChanged, IDynamicProperty, DeepCopy<Palette>
     {
         [TypeConverter(typeof(EnumDescriptionTypeConverter))]
         [DataContract(
@@ -425,6 +427,26 @@ namespace IndicatorsPlusPlus.Delta
         public override string ToString()
         {
             return Name;
+        }
+
+        public bool GetPropertyHasStandardValues(string propertyName)
+        {
+            return false;
+        }
+
+        public bool GetPropertyReadOnly(string propertyName)
+        {
+            return false;
+        }
+
+        public IEnumerable<object> GetPropertyStandardValues(string propertyName)
+        {
+            return Array.Empty<object>();
+        }
+
+        public bool GetPropertyVisibility(string propertyName)
+        {
+            return true;
         }
     }
 }

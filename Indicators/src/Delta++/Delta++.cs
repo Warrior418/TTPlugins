@@ -222,6 +222,7 @@ namespace IndicatorsPlusPlus.Delta
 
         private AdvancedOptions _advancedOptions;
 
+        [Browsable(false)]
         [DataMember(Name = "AdvancedOptions")]
         [Category("Indicator"), DisplayName("Advanced Options")]
         public AdvancedOptions AdvancedOptions
@@ -236,6 +237,88 @@ namespace IndicatorsPlusPlus.Delta
 
                 _advancedOptions = value;
 
+                OnPropertyChanged();
+            }
+        }
+
+        // The 7.4 indicator manager has no expandable-object editor. These keep the
+        // serialized AdvancedOptions object and expose its fields as real editors.
+        [Category("Indicator"), DisplayName("Strict Tiers")]
+        public bool StrictTiers
+        {
+            get => AdvancedOptions.StrictTiers;
+            set
+            {
+                if (value == AdvancedOptions.StrictTiers)
+                {
+                    return;
+                }
+
+                AdvancedOptions.StrictTiers = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [Category("Indicator"), DisplayName("Hide Missing Data Banner")]
+        public bool HideMissingDataBanner
+        {
+            get => AdvancedOptions.HideMissingDataBanner;
+            set
+            {
+                if (value == AdvancedOptions.HideMissingDataBanner)
+                {
+                    return;
+                }
+
+                AdvancedOptions.HideMissingDataBanner = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [Category("Indicator"), DisplayName("Global Zoom Is Enabled")]
+        public bool GlobalZoomIsEnabled
+        {
+            get => AdvancedOptions.Zoom.IsEnabled;
+            set
+            {
+                if (value == AdvancedOptions.Zoom.IsEnabled)
+                {
+                    return;
+                }
+
+                AdvancedOptions.Zoom.IsEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [Category("Indicator"), DisplayName("Global Zoom Min Drawing Width")]
+        public double GlobalZoomMinDrawingWidth
+        {
+            get => AdvancedOptions.Zoom.MinDrawingWidth;
+            set
+            {
+                if (value == AdvancedOptions.Zoom.MinDrawingWidth)
+                {
+                    return;
+                }
+
+                AdvancedOptions.Zoom.MinDrawingWidth = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [Category("Indicator"), DisplayName("Global Zoom Min Column Width")]
+        public double GlobalZoomMinColumnWidth
+        {
+            get => AdvancedOptions.Zoom.MinColumnWidth;
+            set
+            {
+                if (value == AdvancedOptions.Zoom.MinColumnWidth)
+                {
+                    return;
+                }
+
+                AdvancedOptions.Zoom.MinColumnWidth = value;
                 OnPropertyChanged();
             }
         }
